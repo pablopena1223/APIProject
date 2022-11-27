@@ -35,50 +35,65 @@ namespace APIProject.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Service>> GetService(int id)
         {
-          if (_context.services == null)
-          {
-              return NotFound();
-          }
-            var service = await _context.services.FindAsync(id);
-
-            if (service == null)
-            {
-                return NotFound();
-            }
-
-            return service;
-        }
-
-        // PUT: api/Service/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutService(int id, Service service)
-        {
-            if (id != service.ServiceId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(service).State = EntityState.Modified;
-
+            var service = await _context.services.FirstOrDefaultAsync(c => c.ServiceId == id);
             try
             {
-                await _context.SaveChangesAsync();
+                if (service == null)
+                {
+                    throw new Exception("Not Found, ServiceId does not exist");
+                }
+                return StatusCode(200, service);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ServiceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(ex.Message);
             }
 
-            return NoContent();
+            //if (_context.services == null)
+            //{
+            //    return NotFound();
+            //}
+            //var service = await _context.services.FindAsync(id);
+
+            //if (service == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //return service;
+
         }
+
+        //// PUT: api/Service/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutService(int id, Service service)
+        //{
+        //    if (id != service.ServiceId)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    _context.Entry(service).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ServiceExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return NoContent();
+        //}
 
         // POST: api/Service
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
